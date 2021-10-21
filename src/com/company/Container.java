@@ -51,11 +51,6 @@ public class Container {
         sidearr=new float[lenght];
         for(int i=0; i<lenght; i++) sidearr[i]=arr[i];
     }
-    public void copyin2()
-    {
-        sidearr=new float[lenght];
-        for(int i=0; i<lenght; i++) sidearr[i]=arr[i]*2;
-    }
     /**
      * A method that returns the number of element in the container.
      * @return the number of element in the container.
