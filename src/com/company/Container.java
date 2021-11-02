@@ -1,4 +1,6 @@
 package com.company;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
 /**
@@ -13,8 +15,6 @@ public class Container {
     public int lenght;
 
     public float[] arr;
-
-    public float[] sidearr;
 
     Scanner input = new Scanner(System.in);
 
@@ -32,24 +32,30 @@ public class Container {
     public void creatarray()
     {
         System.out.print("Enter a number : ");
-        lenght = input.nextInt();
+        while(!input.hasNextInt()) {
+            System.out.println("Incorrect type!");
+            input.next();
+        }
+        if(input.hasNextInt()) lenght = input.nextInt();
         if(lenght<=0) System.out.print("Incorrect number!");
         else {
             arr = new float[lenght];
             for (int i = 0; i < lenght; i++) {
                 System.out.print("Enter " + (i + 1) + " element : ");
-                arr[i] = input.nextFloat();
+                while(!input.hasNextInt()) {
+                    System.out.println("Incorrect type!");
+                    input.next();
+                }
+                if(input.hasNextInt()) arr[i] = input.nextFloat();
             }
-            copy();
         }
     }
     /**
      *The method of copying the main array to an additional array, used in the elementadd, elementdell.
      */
-    public void copy()
+    public void copy(float[] arr, float[] sarr, int l)
     {
-        sidearr=new float[lenght];
-        for(int i=0; i<lenght; i++) sidearr[i]=arr[i];
+        for(int i=0; i<l; i++) sarr[i]=arr[i];
     }
     /**
      * A method that returns the number of element in the container.
@@ -57,71 +63,69 @@ public class Container {
      */
     public int getlenght()
     {
-        return lenght;
+        if (lenght==0) {
+            System.out.print("Container is empty! Code:");
+            return -1;
+        }
+        else return lenght;
     }
     /**
      * A method that returns an element by requesting its position.
      * @return container element.
      */
-    public float getelem()
-    {
-        int number;
-        System.out.print("Enter a number of element : ");
-        number=input.nextInt();
-        return arr[number - 1];
-
+    public float getelem(int number) {
+        if (number < 0 || number > lenght) {
+            System.out.print("Incorrect position! Code: ");
+            return 1.0f;
+        }
+        else return arr[number - 1];
     }
     /**
      * The method for adding an element.
      * Requests the value of an element from the user.
      * Then asks for the position that this element will be at.
      */
-    public void elementadd()
+    public void elementadd(float newelement, int number)
     {
-        float newelement;
-        int number;
-        System.out.print("Enter a new element : ");
-        newelement=input.nextFloat();
+        float [] sarr;
+        sarr = new float[lenght];
+        copy(arr, sarr, lenght);
         lenght=lenght+1;
-            System.out.print("Enter position (for add in end enter 0) : ");
-            number = input.nextInt();
-            arr = new float[lenght];
-            if (number < 0 || number > lenght) System.out.print("Incorrect position!");
-            else if (number == 1) {
-                arr[0] = newelement;
-                for (int i = 0; i < lenght - 1; i++) arr[i] = sidearr[i + 1];
-            } else if (number == 0) {
-                for (int i = 0; i < lenght - 1; i++) arr[i] = sidearr[i];
-                arr[lenght - 1] = newelement;
-            } else {
-                for (int i = 0; i < number - 1; i++) arr[i] = sidearr[i];
-                arr[number - 1] = newelement;
-                for (int i = number - 1; i < lenght - 1; i++) arr[i + 1] = sidearr[i];
-            }
-        copy();
+        arr = new float[lenght];
+        if (number < 0 || number > lenght) System.out.print("Incorrect position!");
+        else if (number == 1) {
+            arr[0] = newelement;
+            for (int i = 0; i < lenght - 1; i++) arr[i] = sarr[i + 1];
+        } else if (number == 0) {
+            for (int i = 0; i < lenght - 1; i++) arr[i] = sarr[i];
+            arr[lenght - 1] = newelement;
+        } else {
+            for (int i = 0; i < number - 1; i++) arr[i] = sarr[i];
+            arr[number - 1] = newelement;
+            for (int i = number - 1; i < lenght - 1; i++) arr[i + 1] = sarr[i];
+        }
     }
 
     /**
      * The method to delete an element.
      */
-    public void elementdell()
+    public void elementdell(int number)
     {
         if(lenght==0) System.out.print("Cannot delete: container is empty");
         else {
-            int number;
-        System.out.print("Number of element fo delete (for delete the last enter 0) : ");
-        number=input.nextInt();
-        lenght=lenght-1;
-        arr=new float[lenght];
+            float [] sarr;
+            sarr= new float[lenght];
+            copy(arr, sarr, lenght);
+            lenght=lenght-1;
+            arr=new float[lenght];
             if (number < 0 || number > lenght) System.out.print("Incorrect position!");
             else if (number == 1) {
-                for (int i = 0; i < lenght; i++) arr[i] = sidearr[i + 1];
+                for (int i = 0; i < lenght; i++) arr[i] = sarr[i + 1];
             } else if (number == 0) {
-                for (int i = 0; i < lenght; i++) arr[i] = sidearr[i];
+                for (int i = 0; i < lenght; i++) arr[i] = sarr[i];
             } else {
-                for (int i = 0; i < number; i++) arr[i] = sidearr[i];
-                for (int i = number - 1; i < lenght; i++) arr[i] = sidearr[i + 1];
-                copy();
+                for (int i = 0; i < number; i++) arr[i] = sarr[i];
+                for (int i = number - 1; i < lenght; i++) arr[i] = sarr[i + 1];
             }
         }
     }
@@ -134,5 +138,36 @@ public class Container {
         for(int i=0; i<lenght; i++) System.out.print(arr[i] + "  ");
         System.out.println();
     }
-}
+    public String toString() {
+        String result = new String(" ");
+        if (getlenght() == 0) {
+            return result;
+        }
+        for (int i = 0; i < getlenght(); i++) {
+            String t = null;
+            try {
+                t = Float.toString(getelem(i));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            result += t.toString() + " ";
+        }
+        result = result.substring(0, result.length() - 1);
+        return result;
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Container container = (Container) o;
+        return lenght == container.lenght && Arrays.equals(arr, container.arr);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(lenght);
+        result = 31 * result + Arrays.hashCode(arr);
+        return result;
+    }
+}
